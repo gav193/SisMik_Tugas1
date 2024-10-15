@@ -1,67 +1,54 @@
-#define LED 2
-#define BUTTON_ON 5  // Button to turn LED ON
-#define BUTTON_OFF 18 // Button to turn LED OFF
 
-volatile bool ledState = false;   // Current state of the LED (false = OFF, true = ON)
-volatile bool blinkMode = false;  // Whether we should enter the blink mode or not
+#define LED 14
+#define BUTTON1 5  
+#define BUTTON2 18 
+#define BUTTON3 19 
 
-// Interrupt Service Routine for turning ON the LED
+int ledState = 0;  
+int blinkState = 0; 
+
 void IRAM_ATTR turnOnLED() {
-  if (!blinkMode) {  // Only change the LED state if not in blink mode
-    ledState = true;
-    digitalWrite(LED, HIGH);
-  }
+  ledState = 1;
+  digitalWrite(LED, HIGH);
+  blinkState = 0;
 }
 
-// Interrupt Service Routine for turning OFF the LED
 void IRAM_ATTR turnOffLED() {
-  if (!blinkMode) {  // Only change the LED state if not in blink mode
-    ledState = false;
-    digitalWrite(LED, LOW);
-  }
+  ledState = 0;
+  digitalWrite(LED, LOW);
+  blinkState = 0;
 }
 
-// Function to blink the LED when both buttons are pressed
-void blinkLED() {
-  while (blinkMode) {
-    digitalWrite(LED, HIGH);
-    delay(500);  // LED ON for 500 ms
-    digitalWrite(LED, LOW);
-    delay(500);  // LED OFF for 500 ms
-  }
-}
-
-// Interrupt Service Routine to handle both buttons pressed simultaneously (activates blink mode)
-void IRAM_ATTR handleBothPressed() {
-  if (digitalRead(BUTTON_ON) == LOW && digitalRead(BUTTON_OFF) == LOW) { // Both buttons pressed
-    blinkMode = true;  // Activate blink mode
-    blinkLED();        // Start blinking
-  } else {
-    blinkMode = false;  // Deactivate blink mode
-    if (ledState) {
-      digitalWrite(LED, HIGH);  // Restore LED state after exiting blink mode
-    } else {
-      digitalWrite(LED, LOW);
-    }
-  }
+void IRAM_ATTR blinkLED() {
+  blinkState = 1;
 }
 
 void setup() {
   pinMode(LED, OUTPUT);
-  pinMode(BUTTON_ON, INPUT_PULLUP);  // Button to turn LED ON
-  pinMode(BUTTON_OFF, INPUT_PULLUP); // Button to turn LED OFF
-  
-  // Attach interrupt for BUTTON_ON to turn on LED (on falling edge)
-  attachInterrupt(digitalPinToInterrupt(BUTTON_ON), turnOnLED, FALLING);
+  digitalWrite(LED, LOW);  
 
-  // Attach interrupt for BUTTON_OFF to turn off LED (on falling edge)
-  attachInterrupt(digitalPinToInterrupt(BUTTON_OFF), turnOffLED, FALLING);
-  
-  // Attach interrupt to detect when both buttons are pressed
-  attachInterrupt(digitalPinToInterrupt(BUTTON_ON), handleBothPressed, CHANGE);
-  attachInterrupt(digitalPinToInterrupt(BUTTON_OFF), handleBothPressed, CHANGE);
+  // Button pins
+  pinMode(BUTTON1, INPUT_PULLUP); 
+  pinMode(BUTTON2, INPUT_PULLUP);
+  pinMode(BUTTON3, INPUT_PULLUP);
+
+  // Attach interrupts
+  attachInterrupt(digitalPinToInterrupt(BUTTON1), turnOnLED, FALLING);  
+  attachInterrupt(digitalPinToInterrupt(BUTTON2), turnOffLED, FALLING);
+  attachInterrupt(digitalPinToInterrupt(BUTTON3), blinkLED, FALLING);
 }
 
 void loop() {
-  // The main loop does nothing, everything is handled by interrupts
-}
+  if (blinkState) {
+    digitalWrite(LED, HIGH);
+    delay(500);
+    digitalWrite(LED,LOW);
+    delay(500);
+  } else { 
+      if (ledState) {
+        digitalWrite(LED, HIGH);
+      } else {
+        digitalWrite(LED, LOW);
+      }
+  }
+} 

@@ -7,9 +7,9 @@ int sel = 0; // selector for boolean operation types
 
 void setup() {
   pinMode(LED, OUTPUT);
-  pinMode(BUTTON1, INPUT); 
-  pinMode(BUTTON2, INPUT);
-  pinMode(BUTTON3, INPUT); 
+  pinMode(BUTTON1, INPUT_PULLUP); 
+  pinMode(BUTTON2, INPUT_PULLUP);
+  pinMode(BUTTON3, INPUT_PULLUP); 
   digitalWrite(LED, LOW);
   Serial.begin(9600);
 
@@ -33,7 +33,7 @@ int readButton(int pin) { // button read with debounce
       now = millis();
     }
   }
-  return stableState; // return the stable state
+  return !stableState; // return the stable state
 }
 
 void loop() {

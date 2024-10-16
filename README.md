@@ -42,7 +42,3 @@ Kode ini memanfaatkan mekanisme interupsi pada ESP32 untuk merespon input dari t
 - **Tombol 3 (pin D19):** Mengaktifkan mode blinking dengan interval 500ms (untuk opsi b, tidak digunakan dalam tugas ini).
 
 Sistem wiring tombol menggunakan mode **INPUT_PULLUP**, sehingga tombol dihubungkan ke ground, dan ketika tombol ditekan, sinyal berubah menjadi LOW.
-
----
-
-Tugas ini dirancang untuk mempelajari penggunaan **GPIO**, **logika Boolean**, dan **interupsi** pada sistem mikroprosesor (ESP32), serta mengaplikasikan konsep-konsep tersebut dalam implementasi yang nyata.

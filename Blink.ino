@@ -1,4 +1,4 @@
-#define LED 14 // set LED pin to D2
+#define LED 14 // set LED pin to D14
 
 int onTime = 1000;  // Time LED stays ON
 int offTime = 2000; // Time LED stays OFF
